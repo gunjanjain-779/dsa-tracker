@@ -32,5 +32,33 @@ const createProblem = async (req, res, next) => {
         next(error)
     }
 }
-
-module.exports = { createProblem };
+const getProblem = async(req,res,next)=>{
+    try{
+        const {topic,status,difficulty}= req.query;
+        const filter= {user:req.userId};
+        if(topic!==undefined){
+            if(typeof topic !== 'string' || !topic.trim()){
+                return res.status(400).json({message:"Invalid field"});
+            }
+            filter.topic=topic;
+        }
+        if(status!==undefined){
+            if(typeof status !== 'string' || !status.trim()){
+                return res.status(400).json({message:"Invalid field"});
+            }
+            filter.status= status;
+        }
+        if(difficulty!==undefined){
+            if(typeof difficulty !='string' || !difficulty.trim()){
+                return res.status(400).json({message:"Invalid field"});
+            }
+            filter.difficulty= difficulty;
+        }
+        const problems= await Problem.find(filter);
+        return res.status(200).json({problems});
+        
+    }catch(error){
+        next(error)
+    }
+}
+module.exports = { createProblem, getProblem };
