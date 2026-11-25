@@ -61,4 +61,17 @@ const getProblem = async(req,res,next)=>{
         next(error)
     }
 }
-module.exports = { createProblem, getProblem };
+const getProblemById= async (req,res,next) => {
+    try{
+       const id= req.params.id;
+       const filter= {_id:id, user:req.userId};
+       const problem = await Problem.findOne(filter);
+       if(!problem){
+        return res.status(404).json({message:"Problem not found"})
+       }
+       return res.status(200).json({problem});
+    }catch(err){
+        next(err);
+    }
+}
+module.exports = { createProblem, getProblem, getProblemById };
