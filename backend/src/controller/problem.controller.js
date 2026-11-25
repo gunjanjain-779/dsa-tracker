@@ -29,6 +29,7 @@ const createProblem = async (req, res, next) => {
         })
 
     } catch (error) {
+        console.log(error.message);
         next(error)
     }
 }
@@ -74,4 +75,18 @@ const getProblemById= async (req,res,next) => {
         next(err);
     }
 }
-module.exports = { createProblem, getProblem, getProblemById };
+
+const deleteProblem= async(req,res,next)=>{
+    try{
+      const id= req.params.id;
+      const filter= {_id:id,user:req.userId};
+      const deleted= await Problem.findOneAndDelete(filter);
+      if(deleted==null){
+        return res.status(404).json({message:"Problem not found"});
+      }
+      return res.status(200).json({message:"Problem deleted"});
+    }catch(error){
+        next(error);
+    }
+}
+module.exports = { createProblem, getProblem, getProblemById,deleteProblem };
