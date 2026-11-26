@@ -131,4 +131,24 @@ const updateProblem = async (req, res, next) => {
         next(error)
     }
 }
-module.exports = { createProblem, getProblem, getProblemById, deleteProblem, updateProblem };
+
+const addAttempt = async (req, res, next) => {
+    try{
+        const id= req.params.id;
+        const { result } = req.body || {};
+        if(!result || !['solved_alone', 'solved_with_hint', 'could_not_solve'].includes(result)){
+            return res.status(400).json({message:"Invalid result value"});
+        }
+        const problem = await Problem.findOne({_id:id,user:req.userId});
+        if(!problem){
+            return res.status(404).json({message:"Problem not found"});
+        }
+        problem.attempts.push({result});
+        problem.status=result;
+        await problem.save();
+        return res.status(200).json({message:"Attempt added successfully",problem});
+    }catch(error){
+        next(error);
+    }
+}
+module.exports = { createProblem, getProblem, getProblemById, deleteProblem, updateProblem,addAttempt};

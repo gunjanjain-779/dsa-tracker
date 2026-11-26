@@ -30,8 +30,8 @@ const problemSchema= new Schema({
     },
     status:{
         type:String,
-        enum:['Not_Attempted','Solved_alone','Solved_with_hints','Could_not_solve'],
-        default:'Not_Attempted'
+        enum:['not_attempted','solved_alone','solved_with_hints','could_not_solve'],
+        default:'not_attempted'
     },
     stage:{
         type:Number,
