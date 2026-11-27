@@ -1,4 +1,5 @@
 const Problem = require('../models/problem.js');
+const {getNextSchedule} = require('../utils/revision.js');
 
 const createProblem = async (req, res, next) => {
     try {
@@ -143,12 +144,18 @@ const addAttempt = async (req, res, next) => {
         if(!problem){
             return res.status(404).json({message:"Problem not found"});
         }
+        const { stage, days } = getNextSchedule(problem.stage, result);
+        const nextDate = new Date();
+        nextDate.setDate(nextDate.getDate() + days);
         problem.attempts.push({result});
         problem.status=result;
+        problem.stage=stage;
+        problem.nextRevisionDate=nextDate;
         await problem.save();
         return res.status(200).json({message:"Attempt added successfully",problem});
     }catch(error){
         next(error);
     }
 }
+
 module.exports = { createProblem, getProblem, getProblemById, deleteProblem, updateProblem,addAttempt};
